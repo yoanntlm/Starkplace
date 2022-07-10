@@ -3,6 +3,15 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 
+
+@storage_var
+func _max_x() -> (res: felt):
+end
+
+@storage_var
+func _max_y() -> (res: felt):
+end
+
 # declaring a mapping called pixel_color_storage. for each set of coordinates (x,y), we store a color value.
 # Each color is the felt conversion of HEX codes.
 @storage_var
@@ -37,12 +46,15 @@ end
 
 
 
-# WIP, what the hell do I need to input
+# WIP, input max coordinates when deploying the contract
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-
+    max_x: felt,
+    max_y: felt
 ):
-    return ()
+    _max_x.write(max_x)
+    _max_y.write(max_y)
+    return()
 end
 
 
@@ -55,6 +67,6 @@ func assign_pixel_colors{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     let (sender_address) = get_caller_address()
     pixel_colors_storage.write(x = x, y = y, value = color)
     pixel_accounts_storage.write(x = x, y = y, value = sender_address)
-    
+
     return()
 end
